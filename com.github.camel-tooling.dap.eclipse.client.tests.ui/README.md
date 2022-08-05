@@ -9,7 +9,9 @@
 
 1) Download and install latest Eclipse IDE
 2) Import DAP Eclipse Client Maven modules - `File > Import... > Maven > Existing Maven Projects`
+    
     _Note: You need to import UI tests and DAP client:_
+    
         `com.github.camel-tooling.dap.eclipse.client`
         `com.github.camel-tooling.dap.eclipse.client.tests.ui/plugins/com.github.cameltooling.dap.reddeer`
         `com.github.camel-tooling.dap.eclipse.client.tests.ui/tests/com.github.cameltooling.dap.ui.tests`
