@@ -16,60 +16,68 @@
  */
 package com.github.cameltooling.dap.ui.tests;
 
+import org.eclipse.reddeer.common.wait.AbstractWait;
 import org.eclipse.reddeer.common.wait.TimePeriod;
-import org.eclipse.reddeer.common.wait.WaitUntil;
-import org.eclipse.reddeer.eclipse.condition.ConsoleHasText;
 import org.eclipse.reddeer.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.reddeer.eclipse.ui.perspectives.DebugPerspective;
 import org.eclipse.reddeer.junit.runner.RedDeerSuite;
 import org.eclipse.reddeer.requirements.openperspective.OpenPerspectiveRequirement.OpenPerspective;
-import org.eclipse.reddeer.workbench.impl.editor.DefaultEditor;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import com.github.cameltooling.dap.reddeer.dialog.DebugConfigurationDialog;
-import com.github.cameltooling.dap.reddeer.utils.CreateNewEmptyFile;
+import com.github.cameltooling.dap.reddeer.utils.ImportIntoWorkspace;
 import com.github.cameltooling.dap.reddeer.utils.JavaProjectFactory;
-import com.github.cameltooling.dap.ui.tests.utils.EditorManipulator;
 
 /**
+ * TODO
  * 
  * @author fpospisi
  */
 @OpenPerspective(DebugPerspective.class)
 @RunWith(RedDeerSuite.class)
-public class AttachingDebuggerTest {
+public class CreatingConfigurationsTest {
 
-	private static final String PROJECT_NAME = "attaching-dap";
-	private static final String CAMEL_CONTEXT = "camel-context.xml";
+	//private static final String PROJECT_NAME = "creating-configurations-test";
 
-	public static final String RESOURCES_CONTEXT_PATH = "resources/camel-context-cbr.xml";
- 
-	/*
-	 * Prepares test environment. Creates Java project, XML camel context and
-	 * default Apache Camel Textual Debug configuration.
-	 */
+	public static final String RESOURCES_BUILDER_PATH = "resources/my-route.xml";
+
+	public static final String PROJECT_FOLDER_PATH = "resources/main-xml";
+
+	public static final String MVN_CONF = "mvn_conf";
+	public static final String CTD_CONF = "ctd_conf";
+	public static final String GROUPED_CONF = "grouped_conf";
+
 	@BeforeClass
 	public static void setupTestEnvironment() {
-		//create debug configuration
-		DebugConfigurationDialog.createCTD("debug_conf");
-		
-		//create project with camel context
-		JavaProjectFactory.create(PROJECT_NAME);
-		new ProjectExplorer().selectProjects(PROJECT_NAME);
-		CreateNewEmptyFile.genericFile(CAMEL_CONTEXT);
-		DefaultEditor editor = new DefaultEditor(CAMEL_CONTEXT);
-		editor.activate();
-		EditorManipulator.copyFileContentToXMLEditor(RESOURCES_CONTEXT_PATH);
+		ImportIntoWorkspace.importFolder(PROJECT_FOLDER_PATH);
+	}
+
+	/*
+	 * Maven
+	 */
+	@Test
+	public void testCreatingMavenConfiguration() {
+		 DebugConfigurationDialog.createMaven(MVN_CONF, "${workspace_loc:/main-xml}");
+		 AbstractWait.sleep(TimePeriod.getCustom(1000));
 	}
 	
 	/*
-	 * Tests if Apache Camel Textual Debug is started properly. 
+	 * Camel Textual Debug
 	 */
 	@Test
-	public void testAttachingDebugger() {
-		DebugConfigurationDialog.debug("debug_conf");
-		new WaitUntil(new ConsoleHasText("\"command\":\"attach\",\"success\":true}"), TimePeriod.LONG);
+	public void testCreatingCTDConfiguration() {
+		DebugConfigurationDialog.createCTD(CTD_CONF);
+		
 	}
+
+	
+
+	/*
+	 * Grouped
+	 */
+//	@Test
+//	public void testCreatingGLConfigurations() {
+//		DebugConfigurationDialog.createLaunchGroup(GROUPED_CONF, CTD_CONF, MVN_CONF);
+//	}
 }
