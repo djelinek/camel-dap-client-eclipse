@@ -16,9 +16,6 @@
  */
 package com.github.cameltooling.dap.ui.tests;
 
-import org.eclipse.reddeer.common.wait.AbstractWait;
-import org.eclipse.reddeer.common.wait.TimePeriod;
-import org.eclipse.reddeer.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.reddeer.eclipse.ui.perspectives.DebugPerspective;
 import org.eclipse.reddeer.junit.runner.RedDeerSuite;
 import org.eclipse.reddeer.requirements.openperspective.OpenPerspectiveRequirement.OpenPerspective;
@@ -27,7 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.github.cameltooling.dap.reddeer.dialog.DebugConfigurationDialog;
 import com.github.cameltooling.dap.reddeer.utils.ImportIntoWorkspace;
-import com.github.cameltooling.dap.reddeer.utils.JavaProjectFactory;
 
 /**
  * TODO
@@ -38,7 +34,7 @@ import com.github.cameltooling.dap.reddeer.utils.JavaProjectFactory;
 @RunWith(RedDeerSuite.class)
 public class CreatingConfigurationsTest {
 
-	//private static final String PROJECT_NAME = "creating-configurations-test";
+	private static final String PROJECT_NAME = "creating-configurations-test";
 
 	public static final String RESOURCES_BUILDER_PATH = "resources/my-route.xml";
 
@@ -58,26 +54,22 @@ public class CreatingConfigurationsTest {
 	 */
 	@Test
 	public void testCreatingMavenConfiguration() {
-		 DebugConfigurationDialog.createMaven(MVN_CONF, "${workspace_loc:/main-xml}");
-		 AbstractWait.sleep(TimePeriod.getCustom(1000));
+		DebugConfigurationDialog.createMaven(MVN_CONF, "${workspace_loc:/main-xml}");
 	}
-	
+
 	/*
 	 * Camel Textual Debug
 	 */
 	@Test
 	public void testCreatingCTDConfiguration() {
 		DebugConfigurationDialog.createCTD(CTD_CONF);
-		
 	}
-
-	
 
 	/*
 	 * Grouped
 	 */
-//	@Test
-//	public void testCreatingGLConfigurations() {
-//		DebugConfigurationDialog.createLaunchGroup(GROUPED_CONF, CTD_CONF, MVN_CONF);
-//	}
+	@Test
+	public void testCreatingGLConfigurations() {
+		DebugConfigurationDialog.createLaunchGroup(GROUPED_CONF, CTD_CONF, MVN_CONF);
+	}
 }

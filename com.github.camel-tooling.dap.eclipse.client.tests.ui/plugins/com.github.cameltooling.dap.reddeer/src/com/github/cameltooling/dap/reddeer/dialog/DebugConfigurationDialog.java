@@ -16,7 +16,9 @@
  */
 package com.github.cameltooling.dap.reddeer.dialog;
 
-import org.eclipse.reddeer.common.wait.AbstractWait;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.reddeer.common.wait.TimePeriod;
 import org.eclipse.reddeer.common.wait.WaitUntil;
 import org.eclipse.reddeer.common.wait.WaitWhile;
@@ -33,8 +35,8 @@ import org.eclipse.reddeer.swt.impl.menu.ShellMenuItem;
 import org.eclipse.reddeer.swt.impl.shell.DefaultShell;
 import org.eclipse.reddeer.swt.impl.text.LabeledText;
 import org.eclipse.reddeer.swt.impl.tree.DefaultTree;
+import org.eclipse.reddeer.swt.impl.tree.DefaultTreeItem;
 import org.eclipse.reddeer.workbench.impl.shell.WorkbenchShell;
-import org.eclipse.swt.widgets.List;
 
 /**
  * 
@@ -108,35 +110,55 @@ public class DebugConfigurationDialog {
 	public static void createLaunchGroup(String name, String conf1, String conf2) {
 
 		new ShellMenuItem(new WorkbenchShell(), "Run", "Debug Configurations...").select();
-		new WaitUntil(new ShellIsAvailable(DEBUG_CONF), TimePeriod.DEFAULT);
+
 		Shell shell = new DefaultShell(DEBUG_CONF);
+		new WaitUntil(new ShellIsAvailable(shell), TimePeriod.DEFAULT);
+
 		new DefaultTree(shell).getItem(GROUPED_DEBUG).doubleClick();
-		
 		new LabeledText(shell, "Name:").setText(name);
 
-		new PushButton(shell, "Add...").click();
-		
-		//AbstractWait.sleep(TimePeriod.getCustom(1000));
-		
-		new WaitUntil(new ShellIsAvailable("Add Launch Configuration"), TimePeriod.DEFAULT);
-		//Shell activeShell = new DefaultShell("Add Launch Configuration");
-		
-		//shell = new DefaultShell("Add Launch Configuration");
+		/*
+		 * djelinek parody
+		 */
+		// your solution is OK, more info below :-)
+		// here I choose a bit different approach but with same idea I hope
+		// feel free to choose/use what will suit you best
+		List<String[]> options = new ArrayList<String[]>();
+		options.add(new String[] { CAMEL_TEXT_DEBUG, conf1 });
+		options.add(new String[] { MVN_DEBUG, conf2 });
 
-		
-		java.util.List<TreeItem> items = new DefaultTree().getAllItems();
-		for (TreeItem item : items) {
-			
-			if (item.getText().equals(conf1)) {
-				item.doubleClick();
-				//AbstractWait.sleep(TimePeriod.getCustom(1000));
-				new OkButton().click();
-				//new WaitWhile(new ShellIsAvailable("Add Launch Configuration"), TimePeriod.DEFAULT);
-				//AbstractWait.sleep(TimePeriod.getCustom(1000));
-			}
+		for (String[] option : options) {
+			new WaitUntil(new ShellIsAvailable(shell), TimePeriod.DEFAULT);
+			new PushButton(shell, "Add...").click();
+			new WaitUntil(new ShellIsAvailable("Add Launch Configuration"), TimePeriod.DEFAULT);
+
+			new DefaultTreeItem(option).select();
+			new OkButton().click();
 		}
 		
-		new WaitUntil(new ShellIsAvailable(DEBUG_CONF), TimePeriod.DEFAULT);
+		/*
+		 * fpospisi Approach
+		 */
+//		new PushButton(shell, "Add...").click();
+//		new WaitUntil(new ShellIsAvailable("Add Launch Configuration"), TimePeriod.DEFAULT);
+//
+//		List<TreeItem> items = new DefaultTree().getAllItems();
+//		for (TreeItem item : items) {
+//			if (item.getText().equals(conf1)) {
+//				item.doubleClick();
+//				new OkButton().click();
+//				new WaitWhile(new ShellIsAvailable("Add Launch Configuration"), TimePeriod.DEFAULT);
+		
+		
+//				// ---> BTW, only thing which was missing is break for after you add first conf 
+//				// ---> because there is more options and you lost Add Launch Configuration shell after OK button click :-)
+//				break;
+//			}
+//		}
+
+		new WaitUntil(new ShellIsAvailable(shell), TimePeriod.DEFAULT);
+
+		new PushButton(shell, "Apply").click();
 		new PushButton(shell, "Close").click();
 	}
 
