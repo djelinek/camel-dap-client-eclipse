@@ -27,12 +27,14 @@ import org.eclipse.reddeer.common.wait.WaitUntil;
 import org.eclipse.reddeer.eclipse.condition.ConsoleHasText;
 import org.eclipse.reddeer.eclipse.core.resources.ProjectItem;
 import org.eclipse.reddeer.eclipse.debug.ui.views.breakpoints.BreakpointsView;
+import org.eclipse.reddeer.eclipse.ui.console.ConsoleView;
 import org.eclipse.reddeer.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.reddeer.eclipse.ui.perspectives.DebugPerspective;
 import org.eclipse.reddeer.junit.internal.runner.ParameterizedRequirementsRunnerFactory;
 import org.eclipse.reddeer.junit.runner.RedDeerSuite;
-import org.eclipse.reddeer.requirements.cleanworkspace.CleanWorkspaceRequirement;
+//import org.eclipse.reddeer.requirements.cleanworkspace.CleanWorkspaceRequirement;
 import org.eclipse.reddeer.requirements.openperspective.OpenPerspectiveRequirement.OpenPerspective;
+import org.eclipse.reddeer.workbench.handler.EditorHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -118,7 +120,12 @@ public class DebuggingCamelDSLsTest {
 		
 		DebugConfigurationDialog.removeAllConfigurations();
 
-		new CleanWorkspaceRequirement().fulfill();
+//		new CleanWorkspaceRequirement().fulfill();
+		EditorHandler.getInstance().closeAll(true);
+		ProjectExplorer pe = new ProjectExplorer();
+		pe.open();
+		pe.deleteAllProjects(false);
+		pe.activate();
 	}
 	
 	@Test
@@ -134,9 +141,13 @@ public class DebuggingCamelDSLsTest {
 		RunConfigurationDialog.run(MVN_BUILD, MVN_CONF);
 		new WaitUntil(new ConsoleHasText("Hello how are you?"), TimePeriod.LONG);
 
+		ConsoleView console = new ConsoleView();
+		console.activate();
+		console.toggleShowConsoleOnStandardOutChange(false);
+
 		// Run CTD, wait until attached.
 		DebugConfigurationDialog.debug(CAMEL_TEXT_DEBUG, CTD_CONF);
-		new WaitUntil(new ConsoleHasText("\"command\":\"attach\",\"success\":true}"), TimePeriod.LONG);
+		new WaitUntil(new ConsoleHasText("\"command\":\"attach\",\"success\":true}"), TimePeriod.VERY_LONG);
 		
 		// Set breakpoint.
 		GenericEditor editor = new GenericEditor();

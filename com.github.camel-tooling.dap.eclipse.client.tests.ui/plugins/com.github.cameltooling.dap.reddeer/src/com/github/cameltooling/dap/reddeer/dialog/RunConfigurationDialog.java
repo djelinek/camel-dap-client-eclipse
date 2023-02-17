@@ -56,7 +56,7 @@ public class RunConfigurationDialog {
 		Shell shell = new DefaultShell(RUN_CONF);
 		new LabeledText(shell, "Name:").setText(name);
 		new LabeledText(shell, "Base directory:").setText(baseDirectory);
-		new LabeledText(shell, "Goals:").setText("compile camel:run");
+		new LabeledText(shell, "Goals:").setText("clean compile camel:run");
 		new LabeledText(shell, "Profiles:").setText("camel.debug");
 		new CheckBox(shell, "Skip Tests").click();
 
